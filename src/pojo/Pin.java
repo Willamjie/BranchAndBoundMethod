@@ -2,8 +2,6 @@ package pojo;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import pojo.customserializers.ConnectorCustomDeserializer;
-import pojo.customserializers.ConnectorCustomSerializer;
 
 public class Pin {
 
@@ -26,8 +24,6 @@ public class Pin {
     private int x;
     private int y;
 
-    @JsonDeserialize(using = ConnectorCustomDeserializer.class)
-    @JsonSerialize(using = ConnectorCustomSerializer.class)
     private Connector container;
 
     public int getX() {

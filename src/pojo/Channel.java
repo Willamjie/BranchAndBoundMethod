@@ -1,10 +1,5 @@
 package pojo;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import pojo.customserializers.ConnectorCustomDeserializer;
-import pojo.customserializers.ConnectorCustomSerializer;
-
 public class Channel {
 
     public Channel(){}
@@ -21,8 +16,6 @@ public class Channel {
         this.isTop = isTop;
     }
 
-    @JsonDeserialize(using = ConnectorCustomDeserializer.class)
-    @JsonSerialize(using = ConnectorCustomSerializer.class)
     private Connector connector;
     private int occupancy;
     private int maxCapacity;
