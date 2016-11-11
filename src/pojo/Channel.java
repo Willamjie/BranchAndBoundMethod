@@ -1,5 +1,7 @@
 package pojo;
 
+import java.util.List;
+
 public class Channel {
 
     public Channel(){}
@@ -20,6 +22,15 @@ public class Channel {
     private int occupancy;
     private int maxCapacity;
     private boolean isTop;
+    private List<Trace> traces;
+
+    public List<Trace> getTraces() {
+        return traces;
+    }
+
+    public void setTraces(List<Trace> traces) {
+        this.traces = traces;
+    }
 
     public int getOccupancy() {
         return occupancy;
@@ -83,9 +94,15 @@ public class Channel {
     @Override
     public String toString() {
         return "Channel{" +
-                "occupancy=" + occupancy +
+                "connector=" + connector +
+                ", occupancy=" + occupancy +
                 ", maxCapacity=" + maxCapacity +
                 ", isTop=" + isTop +
+                ", traces=" + traces +
                 '}';
+    }
+
+    public boolean isOverloaded() {
+        return this.occupancy > this.maxCapacity;
     }
 }

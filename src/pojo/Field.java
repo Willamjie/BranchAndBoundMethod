@@ -1,9 +1,10 @@
 package pojo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Field {
+public class Field implements Serializable{
 
     public Field() {
 
@@ -74,5 +75,17 @@ public class Field {
                 ", traces=" + traces +
                 ", links=" + links +
                 '}';
+    }
+
+    public Integer getGrade() {
+        Integer grade = 0;
+        for (Trace trace : traces) {
+            if (trace.getPath().get(0).isTop()) {
+                grade += trace.getTopLength();
+            } else {
+                grade += trace.getBottomLength();
+            }
+        }
+        return grade;
     }
 }

@@ -41,7 +41,7 @@ public class Tracer {
         return firstStage + secondStage + thirdStage;
     }
 
-    public static void traceToTop(Field field, Link link) {
+    public static Trace traceToTop(Field field, Link link) {
         List<Connector> connectors = FieldHelper.getConnectorsBetween(field, link.getFirstPin().getContainer(), link.getSecondPin().getContainer());
         List<Channel> path = connectors.stream().map(new Function<Connector, Channel>() {
             @Override
@@ -52,10 +52,17 @@ public class Tracer {
             }
         }).collect(Collectors.toList());
 
-        field.addTrace(new Trace(path, link));
+        Trace trace = new Trace(path, link);
+
+        removeTraceFromChannels(field, trace);
+        setTraceToPath(path, trace);
+
+        field.addTrace(trace);
+
+        return trace;
     }
 
-    public static void traceToBottom(Field field, Link link) {
+    public static Trace traceToBottom(Field field, Link link) {
         List<Connector> connectors = FieldHelper.getConnectorsBetween(field, link.getFirstPin().getContainer(), link.getSecondPin().getContainer());
         List<Channel> path = connectors.stream().map(new Function<Connector, Channel>() {
             @Override
@@ -66,6 +73,25 @@ public class Tracer {
             }
         }).collect(Collectors.toList());
 
-        field.addTrace(new Trace(path, link));
+        Trace trace = new Trace(path, link);
+
+        removeTraceFromChannels(field, trace);
+        setTraceToPath(path, trace);
+
+        field.addTrace(trace);
+        return trace;
+    }
+
+    private static void setTraceToPath(List<Channel> path, Trace trace) {
+        for (Channel channel : path) {
+            channel.getTraces().add(trace);
+        }
+    }
+
+    private static void removeTraceFromChannels(Field field, Trace trace) {
+        for (Connector connector : field.getConnectors()) {
+            connector.getTopChannel().getTraces().remove(trace);
+            connector.getBottomChannel().getTraces().remove(trace);
+        }
     }
 }
