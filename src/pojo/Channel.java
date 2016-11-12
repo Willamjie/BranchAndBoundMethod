@@ -1,8 +1,16 @@
 package pojo;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-public class Channel {
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+public class Channel implements Serializable {
 
     public Channel(){}
 
@@ -19,10 +27,9 @@ public class Channel {
     }
 
     private Connector connector;
-    private int occupancy;
     private int maxCapacity;
     private boolean isTop;
-    private List<Trace> traces;
+    private List<Trace> traces = new LinkedList<Trace>();
 
     public List<Trace> getTraces() {
         return traces;
@@ -32,12 +39,9 @@ public class Channel {
         this.traces = traces;
     }
 
+    @JsonIgnore
     public int getOccupancy() {
-        return occupancy;
-    }
-
-    public void setOccupancy(int occupancy) {
-        this.occupancy = occupancy;
+        return traces.stream().collect(Collectors.summingInt((trace) -> trace.getLink().getThickness()));
     }
 
     public Connector getConnector() {
@@ -64,14 +68,6 @@ public class Channel {
         isTop = top;
     }
 
-    public void increaseOccupancy(Integer value) {
-        occupancy = occupancy + value;
-    }
-
-    public void decreaseOccupancy(Integer value) {
-        occupancy = occupancy - value;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -94,15 +90,14 @@ public class Channel {
     @Override
     public String toString() {
         return "Channel{" +
-                "connector=" + connector +
-                ", occupancy=" + occupancy +
+                "connector=" + connector.getX() + "_" + connector.getY() +
+                ", occupancy=" + getOccupancy() +
                 ", maxCapacity=" + maxCapacity +
                 ", isTop=" + isTop +
-                ", traces=" + traces +
                 '}';
     }
 
     public boolean isOverloaded() {
-        return this.occupancy > this.maxCapacity;
+        return getOccupancy() > this.maxCapacity;
     }
 }

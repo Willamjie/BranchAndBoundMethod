@@ -117,8 +117,7 @@ public class FieldGenerator {
         Field field = new Field(Arrays.asList(connector1, connector2, connector3, connector4),
                 Arrays.asList(link1, link2, link3, link4));
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(new File(path), field);
+        IOUtils.writeField(field, path);
 
     }
 

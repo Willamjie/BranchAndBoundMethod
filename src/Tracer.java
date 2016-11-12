@@ -41,44 +41,28 @@ public class Tracer {
         return firstStage + secondStage + thirdStage;
     }
 
-    public static Trace traceToTop(Field field, Link link) {
-        List<Connector> connectors = FieldHelper.getConnectorsBetween(field, link.getFirstPin().getContainer(), link.getSecondPin().getContainer());
+    public static Trace trace(Field field, Trace trace, boolean isTop) {
+        List<Connector> connectors = FieldHelper.getConnectorsBetween(field, trace.getLink().getFirstPin().getContainer(),
+                trace.getLink().getSecondPin().getContainer());
+
+        removeTraceFromChannels(field, trace);
+
         List<Channel> path = connectors.stream().map(new Function<Connector, Channel>() {
             @Override
             public Channel apply(Connector connector) {
-                Channel channel = connector.getTopChannel();
-                channel.increaseOccupancy(link.getThickness());
+                Channel channel = null;
+                if (isTop) {
+                    channel = connector.getTopChannel();
+                } else {
+                    channel = connector.getBottomChannel();
+                }
                 return channel;
             }
         }).collect(Collectors.toList());
 
-        Trace trace = new Trace(path, link);
-
-        removeTraceFromChannels(field, trace);
+        trace.setPath(path);
         setTraceToPath(path, trace);
 
-        field.addTrace(trace);
-
-        return trace;
-    }
-
-    public static Trace traceToBottom(Field field, Link link) {
-        List<Connector> connectors = FieldHelper.getConnectorsBetween(field, link.getFirstPin().getContainer(), link.getSecondPin().getContainer());
-        List<Channel> path = connectors.stream().map(new Function<Connector, Channel>() {
-            @Override
-            public Channel apply(Connector connector) {
-                Channel channel = connector.getBottomChannel();
-                channel.increaseOccupancy(link.getThickness());
-                return channel;
-            }
-        }).collect(Collectors.toList());
-
-        Trace trace = new Trace(path, link);
-
-        removeTraceFromChannels(field, trace);
-        setTraceToPath(path, trace);
-
-        field.addTrace(trace);
         return trace;
     }
 

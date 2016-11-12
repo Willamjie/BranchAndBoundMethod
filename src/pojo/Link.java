@@ -1,6 +1,11 @@
 package pojo;
 
-public class Link {
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import java.io.Serializable;
+
+public class Link implements Serializable{
 
     public Link() {}
 

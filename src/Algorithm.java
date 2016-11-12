@@ -16,16 +16,16 @@ public class Algorithm {
 
     private static Field getSolution(List<Field> bound) {
         Field bestField = getBestField(bound);
+        Field secondBestField = SerializationUtils.clone(bestField);
         if (!isAllowableField(bestField)) {
             if (hasValuableLooseTraces(bestField)) {
                 //FIXME Actually we don't need to remove bestField and we just need to add new field with retraced candidate trace
                 bound.remove(bestField);
                 Trace firstCandidate = getCandidateToFix(bestField);
-                Tracer.traceToTop(bestField, firstCandidate.getLink()).setFixed(true);
-                Field secondBestField = SerializationUtils.clone(bestField);
+                Tracer.trace(bestField, firstCandidate, true).setFixed(true);
 
                 Trace secondCandidate = getCandidateToFix(secondBestField);
-                Tracer.traceToTop(secondBestField, secondCandidate.getLink()).setFixed(true);
+                Tracer.trace(secondBestField, secondCandidate, false).setFixed(true);
 
                 bound.add(bestField);
                 bound.add(secondBestField);
@@ -50,6 +50,7 @@ public class Algorithm {
         }
 
         Map<Trace, Long> tracesEntrance =  candidateTraces.stream()
+                .filter((trace) -> !trace.isFixed())
                 .collect(
                         Collectors.toMap(
                                 (value) -> value,
@@ -125,12 +126,12 @@ public class Algorithm {
         for (Link link : field.getLinks()) {
             Integer topLength = Tracer.calculateTopLength(link);
             Integer bottomLength = Tracer.calculateBottomLength(link);
-            Trace trace = null;
-            if (topLength < bottomLength) {
-                trace = Tracer.traceToTop(field, link);
-            } else {
-                trace = Tracer.traceToBottom(field, link);
-            }
+
+            Trace trace = new Trace();
+            trace.setLink(link);
+            Tracer.trace(field, trace, topLength < bottomLength);
+
+            field.addTrace(trace);
             trace.setTopLength(topLength);
             trace.setBottomLength(bottomLength);
         }

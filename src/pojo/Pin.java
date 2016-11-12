@@ -1,9 +1,8 @@
 package pojo;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.io.Serializable;
 
-public class Pin {
+public class Pin implements Serializable{
 
     public Pin() {
 
