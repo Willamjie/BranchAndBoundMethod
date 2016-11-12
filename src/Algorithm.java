@@ -40,31 +40,47 @@ public class Algorithm {
     }
 
     private static Trace getCandidateToFix(Field field) {
-        List<Channel> overloadedChannels = new ArrayList<Channel>();
+        List<Trace> candidateTraces = new LinkedList<>();
         for (Connector connector : field.getConnectors()) {
             Channel topChannel = connector.getTopChannel();
             Channel bottomChannel = connector.getBottomChannel();
 
-            if (topChannel.isOverloaded()) overloadedChannels.add(topChannel);
-            if (bottomChannel.isOverloaded()) overloadedChannels.add(bottomChannel);
+            if (topChannel.isOverloaded()) candidateTraces.addAll(topChannel.getTraces());
+            if (bottomChannel.isOverloaded()) candidateTraces.addAll(bottomChannel.getTraces());
         }
 
-        Map<Trace, Integer> tracesEntrance = new HashMap<Trace, Integer>();
+        Map<Trace, Long> tracesEntrance =  candidateTraces.stream()
+                .collect(
+                        Collectors.toMap(
+                                (value) -> value,
+                                (value) -> candidateTraces.stream().filter((candidate) -> candidate.equals(value)).count()
+                        )
+                );
 
-        for (Channel channel : overloadedChannels) {
-            for (Trace trace : channel.getTraces()) {
-                Integer entrance = tracesEntrance.get(trace);
-                if (entrance != null) {
-                    entrance += 1;
-                } else {
-                    entrance = 1;
-                }
-                tracesEntrance.put(trace, entrance);
-            }
-        }
+        List<Map.Entry<Trace, Long>> sortedTraces = tracesEntrance.entrySet().stream()
+                .sorted(new Comparator<Map.Entry<Trace, Long>>() {
+                    @Override
+                    public int compare(Map.Entry<Trace, Long> first, Map.Entry<Trace, Long> second) {
+                        if (first.getValue() == second.getValue()) {
+                            if (first.getKey().getLength() == second.getKey().getLength()) {
+                                return first.getKey().getLink().getThickness().compareTo(second.getKey().getLink().getThickness());
+                            } else {
+                                return first.getKey().getLength().compareTo(second.getKey().getLength());
+                            }
+                        } else {
+                            return first.getValue().compareTo(second.getValue());
+                        }
+                    }
+                })
+                .collect(Collectors.toList());
 
-        //FIXME I just want to sleep
-        return overloadedChannels.get(0).getTraces().get(0);
+        Trace bestCandidate = sortedTraces.stream()
+                .filter((entry) -> entry.getValue() == sortedTraces.get(0).getValue())
+                .findFirst()
+                .map((entry) -> entry.getKey())
+                .get();
+
+        return bestCandidate;
 
     }
 

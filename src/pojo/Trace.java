@@ -56,6 +56,14 @@ public class Trace {
         this.link = link;
     }
 
+    public Integer getLength() {
+        if (path.get(0).isTop()) {
+            return topLength;
+        } else {
+            return bottomLength;
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -87,6 +95,5 @@ public class Trace {
                 ", bottomLength=" + bottomLength +
                 '}';
     }
-
 }
 
