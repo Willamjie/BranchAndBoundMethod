@@ -20,24 +20,6 @@ public class Trace implements Serializable{
     private List<Channel> path = new ArrayList<Channel>();
     private Link link;
     private boolean fixed;
-    private Integer topLength;
-    private Integer bottomLength;
-
-    public Integer getTopLength() {
-        return topLength;
-    }
-
-    public void setTopLength(Integer topLength) {
-        this.topLength = topLength;
-    }
-
-    public Integer getBottomLength() {
-        return bottomLength;
-    }
-
-    public void setBottomLength(Integer bottomLength) {
-        this.bottomLength = bottomLength;
-    }
 
     public boolean isFixed() {
         return fixed;
@@ -65,9 +47,9 @@ public class Trace implements Serializable{
 
     public Integer getLength() {
         if (path.get(0).isTop()) {
-            return topLength;
+            return link.getTopLength();
         } else {
-            return bottomLength;
+            return link.getBottomLength();
         }
     }
 
@@ -98,8 +80,6 @@ public class Trace implements Serializable{
                 "path=" + path +
                 ", link=" + link +
                 ", fixed=" + fixed +
-                ", topLength=" + topLength +
-                ", bottomLength=" + bottomLength +
                 '}';
     }
 }

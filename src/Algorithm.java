@@ -124,16 +124,12 @@ public class Algorithm {
 
     private static void findBestSolution(Field field) {
         for (Link link : field.getLinks()) {
-            Integer topLength = Tracer.calculateTopLength(link);
-            Integer bottomLength = Tracer.calculateBottomLength(link);
 
             Trace trace = new Trace();
             trace.setLink(link);
-            Tracer.trace(field, trace, topLength < bottomLength);
+            Tracer.trace(field, trace, link.getTopLength() < link.getBottomLength());
 
             field.addTrace(trace);
-            trace.setTopLength(topLength);
-            trace.setBottomLength(bottomLength);
         }
     }
 

@@ -13,11 +13,15 @@ public class Link implements Serializable{
         this.firstPin = firstPin;
         this.secondPin = secondPin;
         this.thickness = thickness;
+        this.topLength = calculateTopLength(this);
+        this.bottomLength = calculateBottomLength(this);
     }
 
     private Pin firstPin;
     private Pin secondPin;
     private Integer thickness;
+    private Integer topLength;
+    private Integer bottomLength;
 
     public Pin getFirstPin() {
         return firstPin;
@@ -41,6 +45,57 @@ public class Link implements Serializable{
 
     public void setThickness(Integer thickness) {
         this.thickness = thickness;
+    }
+
+    public Integer getTopLength() {
+        return topLength;
+    }
+
+    public void setTopLength(Integer topLength) {
+        this.topLength = topLength;
+    }
+
+    public Integer getBottomLength() {
+        return bottomLength;
+    }
+
+    public void setBottomLength(Integer bottomLength) {
+        this.bottomLength = bottomLength;
+    }
+
+
+    private Integer calculateBottomLength(Link link) {
+        Integer firstContainerWidth = link.getFirstPin().getContainer().getWidth();
+        Integer firstContainerHeight = link.getFirstPin().getContainer().getHeight();
+        Integer secondContainerHeight = link.getSecondPin().getContainer().getHeight();
+        Integer firstContainerX = link.getFirstPin().getContainer().getX();
+        Integer secondContainerX = link.getSecondPin().getContainer().getX();
+        Integer firstPinX = link.getFirstPin().getX();
+        Integer firstPinY = link.getFirstPin().getY();
+        Integer secondPinX = link.getSecondPin().getX();
+        Integer secondPinY = link.getSecondPin().getY();
+
+        Integer firstStage = firstContainerHeight - firstPinY + firstContainerWidth - firstPinX;
+        Integer secondStage = secondContainerX - firstContainerX - firstContainerWidth;
+        Integer thirdStage = secondContainerHeight - secondPinY + secondPinX;
+
+        return firstStage + secondStage + thirdStage;
+    }
+
+    private Integer calculateTopLength(Link link) {
+        Integer firstContainerWidth = link.getFirstPin().getContainer().getWidth();
+        Integer firstContainerX = link.getFirstPin().getContainer().getX();
+        Integer secondContainerX = link.getSecondPin().getContainer().getX();
+        Integer firstPinX = link.getFirstPin().getX();
+        Integer firstPinY = link.getFirstPin().getY();
+        Integer secondPinX = link.getSecondPin().getX();
+        Integer secondPinY = link.getSecondPin().getY();
+
+        Integer firstStage = firstContainerWidth - firstPinX + firstPinY;
+        Integer secondStage = secondContainerX - firstContainerX - firstContainerWidth;
+        Integer thirdStage = secondPinX + secondPinY;
+
+        return firstStage + secondStage + thirdStage;
     }
 
     //TODO Try to minimize it.

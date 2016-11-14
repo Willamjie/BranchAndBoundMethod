@@ -1,5 +1,7 @@
 package pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,13 +79,14 @@ public class Field implements Serializable{
                 '}';
     }
 
+    @JsonIgnore
     public Integer getGrade() {
         Integer grade = 0;
         for (Trace trace : traces) {
             if (trace.getPath().get(0).isTop()) {
-                grade += trace.getTopLength();
+                grade += trace.getLink().getTopLength();
             } else {
-                grade += trace.getBottomLength();
+                grade += trace.getLink().getBottomLength();
             }
         }
         return grade;

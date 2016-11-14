@@ -97,6 +97,7 @@ public class Channel implements Serializable {
                 '}';
     }
 
+    @JsonIgnore
     public boolean isOverloaded() {
         return getOccupancy() > this.maxCapacity;
     }
